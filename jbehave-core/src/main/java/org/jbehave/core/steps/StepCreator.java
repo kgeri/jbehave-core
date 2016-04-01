@@ -3,6 +3,7 @@ package org.jbehave.core.steps;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -289,7 +290,11 @@ public class StepCreator {
 	}
 	
     private boolean isTable(Type type) {
-        return type instanceof Class && ((Class<?>) type).isAssignableFrom(ExamplesTable.class);
+        if (type instanceof ParameterizedType) {
+            return isTable(((ParameterizedType) type).getRawType());
+        } else {
+            return type instanceof Class && ((Class<?>) type).isAssignableFrom(ExamplesTable.class);
+        }
     }
 
     private String[] parameterValuesForStep(Map<String, String> namedParameters, Type[] types, ParameterName[] names) {
